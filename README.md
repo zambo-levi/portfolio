@@ -62,6 +62,8 @@ Le bon fonctionnement des sous-interfaces et de la passerelle du FortiGate est v
 
 ---
 
+---
+
 ## 🎛️ Étude de Cas #2 : Mise en place d’un cluster de virtualisation Proxmox VE en Haute Disponibilité (HA)
 
 ### 📋 1. Présentation du Projet & Objectifs
@@ -84,23 +86,23 @@ La grappe de serveurs, baptisée **MON-CLUSTER**, rassemble 3 nœuds physiques d
 
 L'onglet *Grappe de serveurs* confirme la parfaite jonction des nœuds et la communication active via l'interface réseau locale.
 
-![Statut de la grappe Proxmox](./images/Schéma global de l'architecture du ckuster.png)
+![Statut de la grappe Proxmox](./images/proxmox-cluster.png)
 
 ---
 
 ### ⚙️ 3. Gestion des Ressources & Migration à Chaud
 Pour valider la flexibilité de l'infrastructure, un conteneur léger de test (`CT 100 - TEST-HA`) a été déployé initialement sur le nœud **pve01**.
 
-![Conteneur 100 en exécution sur pve01](./images/Emplacement de la VM (conteneurà avant migration.png)
+![Conteneur 100 en exécution sur pve01](./images/proxmox-avant-migration.png)
 
 #### Procédure de migration planifiée :
 La maintenance d'un nœud physique nécessite le déplacement transparent de ses charges actives. Une procédure de migration vers le nœud cible **pve02** a été initiée en mode redémarrage.
 
-![Sélection du nœud cible de migration](./images/Choix du noeud pour la migration.png)
+![Sélection du nœud cible de migration](./images/proxmox-choix-migration.png)
 
 Le journal des tâches (Task viewer) valide le bon traitement de l'opération en quelques secondes avec le statut final `TASK OK`.
 
-![Confirmation de réussite de la migration](./images/Migration vers pve02 réussie.png)
+![Confirmation de réussite de la migration](./images/proxmox-migration-ok.png)
 
 ---
 
@@ -110,11 +112,11 @@ La preuve ultime de résilience réside dans la capacité du cluster à réagir 
 #### Étape 1 : Simulation du crash du nœud hôte
 Le conteneur `CT 100` étant hébergé sur le nœud **pve02**, une extinction brutale et non planifiée de cet hyperviseur a été provoquée. L'interface réseau remonte immédiatement une alerte rouge signalant la perte de contact complète avec le nœud **pve02**.
 
-![Perte de connectivité du nœud pve02](./images/Extinction brutale de pve02.png)
+![Perte de connectivité du nœud pve02](./images/proxmox-panne-node.png)
 
 #### Étape 2 : Basculement automatique (Failover HA)
 Grâce au maintien du quorum par les nœuds restants (**pve01** et **pve03**), le gestionnaire de Haute Disponibilité intégré à Proxmox détecte l'absence de signal (fencing) du nœud en panne. 
 
 De manière totalement autonome, le cluster réassigne et redémarre instantanément le conteneur `CT 100` sur l'un des nœuds sains restants. On constate ici sa reprise d'activité immédiate sur le nœud **pve01** avec un temps d'exécution opérationnel retrouvé.
 
-![Ressource récupérée avec succès sur pve01](./images/Récupération par la HA.png)
+![Ressource récupérée avec succès sur pve01](./images/proxmox-ha-recuperation.png)
