@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ZAMBO LEVI — Administrateur Réseaux &amp; Sécurité</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0E12;
+    --bg-panel:#10151C;
+    --bg-panel-2:#141B24;
+    --border:#1F2732;
+    --border-strong:#2A3542;
+    --text:#E8EDF2;
+    --text-dim:#8B98A9;
+    --text-faint:#4E5A67;
+    --accent:#2FD9C4;
+    --accent-dim:#12433C;
+    --amber:#F5A623;
+    --amber-dim:#3D2E10;
+    --red:#FF5C5C;
+    --red-dim:#3A1A1A;
+    --mono:'IBM Plex Mono', ui-monospace, monospace;
+    --sans:'IBM Plex Sans', -apple-system, sans-serif;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+  }
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image:
+      linear-gradient(var(--border) 1px, transparent 1px),
+      linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size:64px 64px;
+    opacity:0.05;
+    pointer-events:none;
+    z-index:0;
+  }
+  a{color:inherit; text-decoration:none;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 32px; position:relative; z-index:1;}
+  ::selection{background:var(--accent); color:#03110F;}
+
+  /* ---------- TOPBAR ---------- */
+  .topbar{
+    position:sticky; top:0; z-index:50;
+    background:rgba(10,14,18,0.88);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .topbar-inner{
+    max-width:1080px; margin:0 auto; padding:0 32px;
+    display:flex; align-items:center; justify-content:space-between;
+    height:52px;
+    font-family:var(--mono); font-size:12.5px;
+  }
+  .topbar-left{display:flex; align-items:center; gap:10px; color:var(--text-dim);}
+  .led{width:7px; height:7px; border-radius:50%; background:var(--accent); box-shadow:0 0 6px var(--accent); flex-shrink:0;}
+  .led.blink{animation:blink 2s ease-in-out infinite;}
+  @keyframes blink{0%,100%{opacity:1;} 50%{opacity:0.35;}}
+  .topbar-nav{display:flex; gap:28px;}
+  .topbar-nav a{color:var(--text-dim); transition:color .15s;}
+  .topbar-nav a:hover{color:var(--accent);}
+  .topbar-right{color:var(--text-faint); display:flex; gap:16px;}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:96px 0 72px;}
+  .eyebrow{
+    font-family:var(--mono); font-size:12px; letter-spacing:.08em;
+    color:var(--accent); margin-bottom:18px; display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{content:"//"; color:var(--text-faint);}
+  .terminal{
+    background:var(--bg-panel);
+    border:1px solid var(--border);
+    border-radius:8px;
+    overflow:hidden;
+    box-shadow:0 24px 60px -20px rgba(0,0,0,0.6);
+  }
+  .terminal-bar{
+    height:34px; display:flex; align-items:center; gap:8px; padding:0 14px;
+    background:var(--bg-panel-2); border-bottom:1px solid var(--border);
+  }
+  .dot{width:9px; height:9px; border-radius:50%;}
+  .dot.r{background:#4a3232;} .dot.y{background:#4a4432;} .dot.g{background:#324a3c;}
+  .terminal-title{margin-left:8px; font-family:var(--mono); font-size:11.5px; color:var(--text-faint);}
+  .terminal-body{padding:26px 28px 32px; font-family:var(--mono); font-size:14.5px;}
+  .tline{margin-bottom:6px; display:flex; gap:10px; min-height:20px;}
+  .prompt{color:var(--accent); flex-shrink:0;}
+  .tout{color:var(--text-dim);}
+  .cursor{display:inline-block; width:8px; height:16px; background:var(--accent); vertical-align:-3px; animation:blink 1s step-end infinite;}
+
+  .hero-name{
+    font-family:var(--mono); font-weight:600;
+    font-size:clamp(34px, 5.5vw, 54px);
+    letter-spacing:-0.01em;
+    margin:28px 0 4px;
+  }
+  .hero-role{font-size:17px; color:var(--text-dim); margin-bottom:22px;}
+  .hero-role b{color:var(--text); font-weight:500;}
+  .tags{display:flex; flex-wrap:wrap; gap:9px; margin-bottom:32px;}
+  .tag{
+    font-family:var(--mono); font-size:11.5px; color:var(--text-dim);
+    border:1px solid var(--border-strong); border-radius:100px; padding:5px 13px;
+  }
+  .cta-row{display:flex; flex-wrap:wrap; gap:12px; align-items:center;}
+  .btn{
+    font-family:var(--mono); font-size:13px; padding:11px 20px; border-radius:6px;
+    display:inline-flex; align-items:center; gap:8px; transition:all .15s;
+  }
+  .btn.primary{background:var(--accent); color:#03110F; font-weight:600;}
+  .btn.primary:hover{background:#4ee8d4;}
+  .btn.ghost{border:1px solid var(--border-strong); color:var(--text);}
+  .btn.ghost:hover{border-color:var(--accent); color:var(--accent);}
+  .sock{display:flex; gap:14px; margin-left:auto;}
+  .sock a{width:36px; height:36px; border:1px solid var(--border-strong); border-radius:6px; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-family:var(--mono); font-size:13px; transition:all .15s;}
+  .sock a:hover{border-color:var(--accent); color:var(--accent);}
+  .bio{
+    max-width:560px; margin-top:28px; padding-top:24px; border-top:1px solid var(--border);
+    font-size:14.5px; color:var(--text-dim); line-height:1.75;
+  }
+
+  /* ---------- SECTION HEADERS ---------- */
+  section{padding:64px 0;}
+  .sec-head{display:flex; align-items:baseline; gap:16px; margin-bottom:40px; border-bottom:1px solid var(--border); padding-bottom:18px;}
+  .sec-num{font-family:var(--mono); font-size:12px; color:var(--text-faint);}
+  .sec-title{font-family:var(--mono); font-size:22px; font-weight:600;}
+  .sec-sub{margin-left:auto; font-family:var(--mono); font-size:12px; color:var(--text-faint);}
+
+  /* ---------- PROJECT PANEL ---------- */
+  .panel{
+    background:var(--bg-panel); border:1px solid var(--border); border-radius:10px;
+    margin-bottom:28px; overflow:hidden;
+  }
+  .panel-head{
+    display:flex; align-items:center; gap:14px; padding:20px 26px;
+    border-bottom:1px solid var(--border); flex-wrap:wrap;
+  }
+  .status-pill{
+    display:flex; align-items:center; gap:7px; font-family:var(--mono); font-size:11px;
+    color:var(--accent); background:var(--accent-dim); border-radius:100px; padding:5px 12px;
+  }
+  .panel-title{font-family:var(--mono); font-size:18px; font-weight:600;}
+  .panel-meta{font-family:var(--mono); font-size:11.5px; color:var(--text-faint); margin-left:auto;}
+  .panel-body{padding:26px;}
+  .panel-grid{display:grid; grid-template-columns:1.1fr 1fr; gap:28px;}
+  @media(max-width:760px){.panel-grid{grid-template-columns:1fr;}}
+  .shot{border:1px solid var(--border); border-radius:6px; overflow:hidden; background:#000;}
+  .shot img{display:block; width:100%; height:auto;}
+  .cap{font-family:var(--mono); font-size:10.5px; color:var(--text-faint); padding:8px 2px 0;}
+  .desc-list{list-style:none; margin:0 0 20px;}
+  .desc-list li{
+    position:relative; padding-left:18px; margin-bottom:10px; font-size:14px; color:var(--text-dim);
+  }
+  .desc-list li::before{content:"›"; position:absolute; left:0; color:var(--accent); font-family:var(--mono);}
+  .stack{display:flex; flex-wrap:wrap; gap:7px; margin-bottom:20px;}
+  .chip{font-family:var(--mono); font-size:10.5px; background:var(--bg-panel-2); border:1px solid var(--border); border-radius:4px; padding:3px 8px; color:var(--text-dim);}
+
+  .proof-grid{display:grid; grid-template-columns:repeat(3, 1fr); gap:12px; margin-top:18px;}
+  @media(max-width:760px){.proof-grid{grid-template-columns:1fr 1fr;}}
+  .proof{border:1px solid var(--border); border-radius:6px; overflow:hidden;}
+  .proof img{display:block; width:100%; height:110px; object-fit:cover; object-position:top;}
+  .proof-tag{
+    font-family:var(--mono); font-size:9.5px; padding:6px 8px; display:flex; align-items:center; gap:6px;
+  }
+  .proof-tag.ok{color:var(--accent); background:var(--accent-dim);}
+  .proof-tag.deny{color:var(--red); background:var(--red-dim);}
+  .proof-tag.neutral{color:var(--text-dim); background:var(--bg-panel-2);}
+
+  .flow{display:flex; align-items:stretch; gap:0; margin-top:18px; flex-wrap:wrap;}
+  .flow-step{flex:1; min-width:150px;}
+  .flow-shot{border:1px solid var(--border); border-radius:6px; overflow:hidden;}
+  .flow-shot img{width:100%; height:120px; object-fit:cover; object-position:top; display:block;}
+  .flow-label{font-family:var(--mono); font-size:10.5px; color:var(--text-dim); margin-top:8px; text-align:center;}
+  .flow-arrow{display:flex; align-items:center; justify-content:center; width:34px; color:var(--text-faint); font-family:var(--mono); flex-shrink:0;}
+  @media(max-width:700px){.flow{flex-direction:column;} .flow-arrow{width:100%; height:24px; transform:rotate(90deg);}}
+
+  /* ---------- SKILLS / EDUCATION ---------- */
+  .split{display:grid; grid-template-columns:1fr 1fr; gap:40px;}
+  @media(max-width:760px){.split{grid-template-columns:1fr;}}
+  .config-block{
+    background:var(--bg-panel); border:1px solid var(--border); border-radius:8px; padding:24px;
+    font-family:var(--mono); font-size:13px;
+  }
+  .config-line{display:flex; justify-content:space-between; padding:9px 0; border-bottom:1px solid var(--border);}
+  .config-line:last-child{border-bottom:none;}
+  .config-key{color:var(--text-faint);}
+  .config-val{color:var(--text);}
+  .config-val.accent{color:var(--accent);}
+  .edu-item{padding:16px 0; border-bottom:1px solid var(--border);}
+  .edu-item:last-child{border-bottom:none;}
+  .edu-top{display:flex; justify-content:space-between; gap:12px; margin-bottom:4px;}
+  .edu-title{font-size:14px; font-weight:500;}
+  .edu-year{font-family:var(--mono); font-size:11px; color:var(--accent); white-space:nowrap;}
+  .edu-place{font-size:12.5px; color:var(--text-faint);}
+  .skill-cats{display:grid; grid-template-columns:1fr 1fr; gap:10px 24px; margin-top:18px;}
+  .skill-cat-title{font-family:var(--mono); font-size:11px; color:var(--text-faint); margin-bottom:8px; letter-spacing:.04em;}
+  .skill-tags{display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px;}
+
+  /* ---------- FOOTER ---------- */
+  footer{padding:64px 0 48px; border-top:1px solid var(--border);}
+  .foot-grid{display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:24px;}
+  .foot-title{font-family:var(--mono); font-size:26px; font-weight:600; margin-bottom:10px;}
+  .foot-sub{color:var(--text-dim); font-size:14px; max-width:380px;}
+  .foot-links{display:flex; flex-direction:column; gap:10px; font-family:var(--mono); font-size:13px;}
+  .foot-links a{color:var(--text-dim); transition:color .15s;}
+  .foot-links a:hover{color:var(--accent);}
+  .foot-bottom{margin-top:48px; padding-top:20px; border-top:1px solid var(--border); font-family:var(--mono); font-size:11px; color:var(--text-faint); display:flex; justify-content:space-between; flex-wrap:wrap; gap:8px;}
+
+  .reveal{opacity:0; transform:translateY(18px); transition:opacity .6s ease, transform .6s ease;}
+  .reveal.in{opacity:1; transform:translateY(0);}
+
+  @media(max-width:600px){
+    .wrap{padding:0 18px;}
+    .topbar-nav{display:none;}
+    .panel-grid{grid-template-columns:1fr;}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="topbar-left"><span class="led blink"></span> zambolevi@portfolio <span style="color:var(--text-faint)">~</span></div>
+    <div class="topbar-nav">
+      <a href="#projets">projets</a>
+      <a href="#competences">compétences</a>
+      <a href="#formation">formation</a>
+      <a href="#contact">contact</a>
+    </div>
+    <div class="topbar-right"><span id="clock">00:00:00</span></div>
+  </div>
+</div>
+
+<div class="wrap hero">
+  <div class="eyebrow">portfolio technique — licence pro asur</div>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <span class="dot r"></span><span class="dot y"></span><span class="dot g"></span>
+      <span class="terminal-title">zsh — ~/levi</span>
+    </div>
+    <div class="terminal-body" id="term">
+    </div>
+  </div>
+
+  <h1 class="hero-name">ZAMBO LEVI</h1>
+  <p class="hero-role">Administrateur <b>réseaux &amp; sécurité</b> junior — segmentation, virtualisation &amp; haute disponibilité</p>
+
+  <div class="tags">
+    <span class="tag">VLAN &amp; pare-feu next-gen</span>
+    <span class="tag">Proxmox VE / HA</span>
+    <span class="tag">FortiGate</span>
+    <span class="tag">Supervision Zabbix</span>
+    <span class="tag">Libreville, Gabon</span>
+  </div>
+
+  <div class="cta-row">
+    <a href="#projets" class="btn primary">Voir les projets ↓</a>
+    <div class="sock">
+      <a href="mailto:levi.zambo.student@inptic.ga" title="Email">@</a>
+      <a href="https://github.com/zambo-levi" title="GitHub">gh</a>
+    </div>
+  </div>
+
+  <p class="bio">Curieux des architectures qui tiennent debout même quand tout s'effondre autour, je construis mes compétences en réseaux et sécurité en simulant des pannes avant qu'elles n'arrivent en vrai : segmentation stricte, bascule automatique, supervision en continu. J'aime comprendre un système jusqu'à savoir exactement où il va casser, puis m'assurer qu'il ne casse pas.</p>
+</div>
+
+<div class="wrap" id="projets">
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">01</span>
+      <span class="sec-title">Projets déployés</span>
+      <span class="sec-sub">2 études de cas — PNETLab / Proxmox VE 9.1.1</span>
+    </div>
+
+    <!-- PROJECT 1 : FORTIGATE -->
+    <div class="panel reveal">
+      <div class="panel-head">
+        <span class="status-pill"><span class="led"></span> en production</span>
+        <span class="panel-title">Sécurisation VLAN — pare-feu Next-Gen FortiGate</span>
+        <span class="panel-meta">PNETLab</span>
+      </div>
+      <div class="panel-body">
+        <div class="stack">
+          <span class="chip">FortiGate VM64-KVM</span>
+          <span class="chip">4 VLANs</span>
+          <span class="chip">NAT</span>
+          <span class="chip">Least privilege</span>
+        </div>
+        <div class="panel-grid">
+          <div>
+            <ul class="desc-list">
+              <li>Cloisonnement de 4 zones : Admin (VLAN10), Utilisateurs (VLAN20), Invités (VLAN30), Management (VLAN99).</li>
+              <li>Politique <b style="color:var(--text)">least privilege</b> : accès admin étendu, Internet filtré pour les autres zones.</li>
+              <li>Blocage implicite (<span style="color:var(--red)">DENY</span>) de tout flux inter-zone non explicitement autorisé.</li>
+              <li>Validation par tests ICMP croisés + analyse du journal Forward Traffic en temps réel.</li>
+            </ul>
+          </div>
+          <div class="shot">
+            <img src="images/Topologie.png" alt="Topologie réseau PNETLab">
+          </div>
+        </div>
+        <div class="cap">Topologie — routeur/switch central vers 4 zones + WAN (port2)</div>
+
+        <div class="proof-grid">
+          <div class="proof">
+            <img src="images/Invit%C3%A9s%20vers%20internet%20autoris%C3%A9s.png" alt="Invité vers Internet autorisé">
+            <div class="proof-tag ok">✓ Invité → 8.8.8.8 (policy 3)</div>
+          </div>
+          <div class="proof">
+            <img src="images/utilisa%20vers%20admin.png" alt="Utilisateur vers Admin bloqué">
+            <div class="proof-tag deny">✕ Utilisateur → Admin (deny)</div>
+          </div>
+          <div class="proof">
+            <img src="images/Logs%20pare%20feu.png" alt="Logs pare-feu">
+            <div class="proof-tag neutral">Forward Traffic — policy ID 5</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROJECT 2 : PROXMOX -->
+    <div class="panel reveal">
+      <div class="panel-head">
+        <span class="status-pill"><span class="led"></span> quorum ok — 3/3</span>
+        <span class="panel-title">Cluster Proxmox VE en haute disponibilité</span>
+        <span class="panel-meta">Proxmox VE 9.1.1</span>
+      </div>
+      <div class="panel-body">
+        <div class="stack">
+          <span class="chip">Corosync</span>
+          <span class="chip">3 nœuds</span>
+          <span class="chip">Stockage partagé</span>
+          <span class="chip">Failover HA</span>
+        </div>
+        <div class="panel-grid">
+          <div>
+            <ul class="desc-list">
+              <li>Grappe <b style="color:var(--text)">MON-CLUSTER</b> — pve01, pve02, pve03, 1 vote actif chacun, quorum via Corosync.</li>
+              <li>Stockage partagé inter-nœuds pour la mobilité des charges de travail.</li>
+              <li>Migration à chaud planifiée d'un conteneur test entre nœuds — <span style="color:var(--accent)">TASK OK</span>.</li>
+              <li>Simulation de crash matériel : reprise autonome par le gestionnaire HA en quelques secondes.</li>
+            </ul>
+          </div>
+          <div class="shot">
+            <img src="images/proxmox-cluster.png" alt="Statut de la grappe Proxmox">
+          </div>
+        </div>
+        <div class="cap">Grappe de serveurs — 3 nœuds, quorum 3/3, liens actifs</div>
+
+        <div class="flow">
+          <div class="flow-step">
+            <div class="flow-shot"><img src="images/proxmox-avant-migration.png" alt="CT100 avant migration"></div>
+            <div class="flow-label">CT100 sur pve01</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-shot"><img src="images/proxmox-migration-ok.png" alt="Migration réussie"></div>
+            <div class="flow-label">Migration → pve02 (TASK OK)</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-shot"><img src="images/proxmox-panne-node.png" alt="Crash pve02"></div>
+            <div class="flow-label">Extinction brutale pve02</div>
+          </div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">
+            <div class="flow-shot"><img src="images/proxmox-ha-recuperation.png" alt="Récupération HA"></div>
+            <div class="flow-label">Reprise HA sur pve01</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap" id="competences">
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">02</span>
+      <span class="sec-title">Compétences</span>
+    </div>
+    <div class="split">
+      <div>
+        <div class="skill-cat-title">RÉSEAUX &amp; SÉCURITÉ</div>
+        <div class="skill-tags">
+          <span class="tag">VLAN / routage inter-VLAN</span>
+          <span class="tag">FortiGate NGFW</span>
+          <span class="tag">NAC — FreeRADIUS / OpenLDAP</span>
+          <span class="tag">NIDS / HIDS</span>
+        </div>
+        <div class="skill-cat-title">VIRTUALISATION &amp; SYSTÈMES</div>
+        <div class="skill-tags">
+          <span class="tag">Proxmox VE / Corosync</span>
+          <span class="tag">Haute disponibilité</span>
+          <span class="tag">Windows Server 2025</span>
+          <span class="tag">Cluster de basculement SMB</span>
+        </div>
+        <div class="skill-cat-title">SUPERVISION</div>
+        <div class="skill-tags">
+          <span class="tag">Zabbix</span>
+          <span class="tag">Centralisation de logs</span>
+          <span class="tag">PNETLab</span>
+        </div>
+      </div>
+      <div class="config-block">
+        <div class="config-line"><span class="config-key">langue.fr</span><span class="config-val accent">courant — natif</span></div>
+        <div class="config-line"><span class="config-key">langue.en</span><span class="config-val">technique — basique</span></div>
+        <div class="config-line"><span class="config-key">disponibilité</span><span class="config-val accent">stage / alternance</span></div>
+        <div class="config-line"><span class="config-key">localisation</span><span class="config-val">Libreville, Gabon</span></div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap" id="formation">
+  <section>
+    <div class="sec-head">
+      <span class="sec-num">03</span>
+      <span class="sec-title">Formation</span>
+    </div>
+    <div class="config-block" style="font-family:var(--sans);">
+      <div class="edu-item">
+        <div class="edu-top">
+          <span class="edu-title">Licence Professionnelle ASUR — Administration &amp; Sécurité des Réseaux</span>
+          <span class="edu-year">2025 — 2026</span>
+        </div>
+        <div class="edu-place">INPTIC, Libreville, Gabon · en cours</div>
+      </div>
+      <div class="edu-item">
+        <div class="edu-top">
+          <span class="edu-title">DTS en Réseaux Télécoms</span>
+          <span class="edu-year">2024 — 2025</span>
+        </div>
+        <div class="edu-place">INPTIC, Libreville, Gabon</div>
+      </div>
+      <div class="edu-item">
+        <div class="edu-top">
+          <span class="edu-title">Baccalauréat SI — Sciences de l'Ingénieur</span>
+          <span class="edu-year">2020 — 2021</span>
+        </div>
+        <div class="edu-place">Lycée Technique National Omar Bongo, Libreville, Gabon</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+<div class="wrap" id="contact">
+  <footer>
+    <div class="foot-grid">
+      <div>
+        <div class="foot-title">Discutons.</div>
+        <div class="foot-sub">Disponible pour un stage ou une alternance en administration réseaux &amp; sécurité.</div>
+      </div>
+      <div class="foot-links">
+        <a href="mailto:levi.zambo.student@inptic.ga">levi.zambo.student@inptic.ga</a>
+        <a href="https://github.com/zambo-levi">github.com/zambo-levi</a>
+        <a href="https://zambo-levi.github.io/portfolio/">zambo-levi.github.io/portfolio</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 ZAMBO LEVI</span>
+      <span>build: portfolio-v1 · uptime stable</span>
+    </div>
+  </footer>
+</div>
+
+<script>
+  function pad(n){return n.toString().padStart(2,'0');}
+  let s=0;
+  setInterval(()=>{s++; const h=pad(Math.floor(s/3600)), m=pad(Math.floor((s%3600)/60)), sec=pad(s%60); document.getElementById('clock').textContent = h+':'+m+':'+sec;},1000);
+
+  const lines = [
+    {p:'$', t:'whoami'},
+    {p:'>', t:'ZAMBO LEVI — Administrateur Réseaux & Sécurité junior', out:true},
+    {p:'$', t:'cat objectif.conf'},
+    {p:'>', t:'Concevoir, sécuriser et fiabiliser des infrastructures réseau.', out:true},
+  ];
+  const term = document.getElementById('term');
+  let li=0, ci=0;
+  function typeLine(){
+    if(li>=lines.length) return;
+    const row=document.createElement('div'); row.className='tline';
+    const prompt=document.createElement('span'); prompt.className='prompt'; prompt.textContent=lines[li].p;
+    const out=document.createElement('span'); out.className= lines[li].out ? 'tout' : '';
+    if(!lines[li].out) out.style.color='var(--text)';
+    row.appendChild(prompt); row.appendChild(out);
+    term.appendChild(row);
+    const text=lines[li].t; ci=0;
+    const cursor=document.createElement('span'); cursor.className='cursor';
+    out.after(cursor);
+    function typeChar(){
+      if(ci<text.length){ out.textContent+=text[ci]; ci++; setTimeout(typeChar, lines[li].out?8:32); }
+      else{ cursor.remove(); li++; setTimeout(typeLine, 260); }
+    }
+    typeChar();
+  }
+  typeLine();
+
+  const io = new IntersectionObserver((entries)=>{
+    entries.forEach(e=>{ if(e.isIntersecting){ e.target.classList.add('in'); } });
+  },{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+</script>
+
+</body>
+</html>
