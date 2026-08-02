@@ -57,3 +57,64 @@ Le module *Forward Traffic* du FortiGate intercepte et journalise immédiatement
 Le bon fonctionnement des sous-interfaces et de la passerelle du FortiGate est validé par un diagnostic réseau réussi depuis l'hôte de Management vers son interface d'infrastructure dédiée en `192.168.99.1`.
 
 ![Ping Management Passerelle](./images/Ping%20pare%20feu%20depuis%20vlan%2099.png)
+
+
+
+---
+
+## 🎛️ Étude de Cas #2 : Mise en place d’un cluster de virtualisation Proxmox VE en Haute Disponibilité (HA)
+
+### 📋 1. Présentation du Projet & Objectifs
+L'objectif de cette réalisation est de concevoir une infrastructure de virtualisation redondante et hautement disponible capable de supporter les applications critiques d'une entreprise. La mise en place d'un cluster permet de mutualiser les ressources physiques, de faciliter la maintenance à chaud et de garantir la continuité de service en cas de défaillance matérielle.
+
+**Objectifs clés :**
+*   Déploiement et interconnexion de 3 nœuds hyperviseurs Proxmox VE (PVE 9.1.1).
+*   Configuration du Quorum et de la grappe de serveurs via Corosync.
+*   Intégration d'un stockage partagé inter-nœuds pour permettre la mobilité des données.
+*   Mise en œuvre et validation de la Haute Disponibilité (HA) lors d'un scénario de crash.
+
+---
+
+### 🗺️ 2. Architecture du Cluster & Configuration de la Grappe
+La grappe de serveurs, baptisée **MON-CLUSTER**, rassemble 3 nœuds physiques distincts disposant chacun d'un vote actif pour garantir la validité du Quorum :
+
+*   **pve01 :** `192.168.255.101` (1 vote)
+*   **pve02 :** `192.168.255.102` (1 vote)
+*   **pve03 :** `192.168.255.103` (1 vote)
+
+L'onglet *Grappe de serveurs* confirme la parfaite jonction des nœuds et la communication active via l'interface réseau locale.
+
+![Statut de la grappe Proxmox](./images/Schéma global de l'architecture du ckuster.png)
+
+---
+
+### ⚙️ 3. Gestion des Ressources & Migration à Chaud
+Pour valider la flexibilité de l'infrastructure, un conteneur léger de test (`CT 100 - TEST-HA`) a été déployé initialement sur le nœud **pve01**.
+
+![Conteneur 100 en exécution sur pve01](./images/Emplacement de la VM (conteneurà avant migration.png)
+
+#### Procédure de migration planifiée :
+La maintenance d'un nœud physique nécessite le déplacement transparent de ses charges actives. Une procédure de migration vers le nœud cible **pve02** a été initiée en mode redémarrage.
+
+![Sélection du nœud cible de migration](./images/Choix du noeud pour la migration.png)
+
+Le journal des tâches (Task viewer) valide le bon traitement de l'opération en quelques secondes avec le statut final `TASK OK`.
+
+![Confirmation de réussite de la migration](./images/Migration vers pve02 réussie.png)
+
+---
+
+### 🎯 4. Phase de Recette : Simulation de Panne et Haute Disponibilité (HA)
+La preuve ultime de résilience réside dans la capacité du cluster à réagir de manière autonome face à une panne matérielle sévère.
+
+#### Étape 1 : Simulation du crash du nœud hôte
+Le conteneur `CT 100` étant hébergé sur le nœud **pve02**, une extinction brutale et non planifiée de cet hyperviseur a été provoquée. L'interface réseau remonte immédiatement une alerte rouge signalant la perte de contact complète avec le nœud **pve02**.
+
+![Perte de connectivité du nœud pve02](./images/Extinction brutale de pve02.png)
+
+#### Étape 2 : Basculement automatique (Failover HA)
+Grâce au maintien du quorum par les nœuds restants (**pve01** et **pve03**), le gestionnaire de Haute Disponibilité intégré à Proxmox détecte l'absence de signal (fencing) du nœud en panne. 
+
+De manière totalement autonome, le cluster réassigne et redémarre instantanément le conteneur `CT 100` sur l'un des nœuds sains restants. On constate ici sa reprise d'activité immédiate sur le nœud **pve01** avec un temps d'exécution opérationnel retrouvé.
+
+![Ressource récupérée avec succès sur pve01](./images/Récupération par la HA.png)
